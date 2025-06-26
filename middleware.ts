@@ -29,11 +29,15 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Allow auth pages without token
-        if (req.nextUrl.pathname.startsWith('/auth')) {
+        // Always allow public pages
+        if (
+          req.nextUrl.pathname === '/' ||
+          req.nextUrl.pathname.startsWith('/blog') ||
+          req.nextUrl.pathname.startsWith('/qa') ||
+          req.nextUrl.pathname.startsWith('/auth')
+        ) {
           return true
         }
-        
         // Require token for all other pages
         return !!token
       },
@@ -43,12 +47,13 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
+    // Only match private pages for auth
+    '/dashboard/:path*',
+    '/members/:path*',
+    '/classes/:path*',
+    '/trainers/:path*',
+    '/admin/:path*',
+    // Auth and public pages are always allowed
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 } 

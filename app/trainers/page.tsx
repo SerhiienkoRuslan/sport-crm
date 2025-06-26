@@ -19,7 +19,8 @@ import {
   BarChart3
 } from 'lucide-react'
 import Link from 'next/link'
-
+import ProtectedPage from '@/components/auth/protected-page'
+import { useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button } from '@/components/ui'
 
 // Mock data - in real app this would come from database
@@ -130,227 +131,229 @@ export default function TrainersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
-      {/* Header */}
-      <div className="bg-gray-800 shadow-lg border-b border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-white">Trainers</h1>
-              <p className="mt-2 text-gray-300">Manage your fitness trainers and their schedules</p>
-            </div>
-            <Button asChild>
-              <Link href="/trainers/new">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Trainer
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Total Trainers</CardTitle>
-              <UserCheck className="h-4 w-4 text-gray-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">{mockTrainers.length}</div>
-              <p className="text-xs text-gray-400">
-                Active trainers
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Total Classes</CardTitle>
-              <Calendar className="h-4 w-4 text-blue-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {mockTrainers.reduce((sum, trainer) => sum + trainer.totalClasses, 0)}
+    <ProtectedPage>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+        {/* Header */}
+        <div className="bg-gray-800 shadow-lg border-b border-gray-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-white">Trainers</h1>
+                <p className="mt-2 text-gray-300">Manage your fitness trainers and their schedules</p>
               </div>
-              <p className="text-xs text-gray-400">
-                Classes conducted
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Active Members</CardTitle>
-              <Users className="h-4 w-4 text-green-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {mockTrainers.reduce((sum, trainer) => sum + trainer.activeMembers, 0)}
-              </div>
-              <p className="text-xs text-gray-400">
-                Members trained
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Avg Rating</CardTitle>
-              <Star className="h-4 w-4 text-yellow-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {(mockTrainers.reduce((sum, trainer) => sum + trainer.rating, 0) / mockTrainers.length).toFixed(1)}
-              </div>
-              <p className="text-xs text-gray-400">
-                Out of 5 stars
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Search and Filters */}
-        <Card className="bg-gray-800 border-gray-700 mb-6">
-          <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search trainers by name, specialization, or location..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-              <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700">
-                <Filter className="h-4 w-4 mr-2" />
-                Filter
+              <Button asChild>
+                <Link href="/trainers/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Trainer
+                </Link>
               </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Trainers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockTrainers.map((trainer) => (
-            <Card key={trainer.id} className="bg-gray-800 border-gray-700 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <CardTitle className="text-white">{trainer.name}</CardTitle>
-                    <CardDescription className="text-gray-400">
-                      {trainer.specialization}
-                    </CardDescription>
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-700">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-700">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-900/20">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center space-x-2 text-sm">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-300">{trainer.email}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm">
-                  <Phone className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-300">{trainer.phone}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm">
-                  <MapPin className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-300">{trainer.location}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm">
-                  <Clock className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-300">{trainer.availability}</span>
-                </div>
-                
-                <div className="flex items-center justify-between pt-2">
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="text-sm text-white">{trainer.rating}</span>
-                  </div>
-                  <span className="text-sm text-gray-400">{trainer.experience}</span>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className={`px-2 py-1 text-xs rounded-full ${getSpecializationColor(trainer.specialization)}`}>
-                    {trainer.specialization}
-                  </span>
-                  <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(trainer.status)}`}>
-                    {trainer.status}
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 pt-2 text-sm">
-                  <div className="text-center">
-                    <div className="text-white font-medium">{trainer.totalClasses}</div>
-                    <div className="text-gray-400 text-xs">Classes</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-white font-medium">{trainer.activeMembers}</div>
-                    <div className="text-gray-400 text-xs">Members</div>
-                  </div>
-                </div>
-                
-                <div className="flex space-x-2 pt-2">
-                  <Button size="sm" className="flex-1">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    Schedule
-                  </Button>
-                  <Button size="sm" variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">
-                    <BarChart3 className="h-3 w-3 mr-1" />
-                    Stats
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="mt-8">
-          <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-          <div className="flex flex-wrap gap-4">
-            <Button asChild>
-              <Link href="/trainers/new">
-                <Plus className="h-4 w-4 mr-2" />
-                Add New Trainer
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="border-gray-600 text-gray-300 hover:bg-gray-700">
-              <Link href="/schedule">
-                <Calendar className="h-4 w-4 mr-2" />
-                View Schedules
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="border-gray-600 text-gray-300 hover:bg-gray-700">
-              <Link href="/certifications">
-                <Award className="h-4 w-4 mr-2" />
-                Manage Certifications
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="border-gray-600 text-gray-300 hover:bg-gray-700">
-              <Link href="/reports">
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Trainer Reports
-              </Link>
-            </Button>
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <Card className="bg-gray-800 border-gray-700">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-300">Total Trainers</CardTitle>
+                <UserCheck className="h-4 w-4 text-gray-400" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white">{mockTrainers.length}</div>
+                <p className="text-xs text-gray-400">
+                  Active trainers
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-800 border-gray-700">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-300">Total Classes</CardTitle>
+                <Calendar className="h-4 w-4 text-blue-400" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white">
+                  {mockTrainers.reduce((sum, trainer) => sum + trainer.totalClasses, 0)}
+                </div>
+                <p className="text-xs text-gray-400">
+                  Classes conducted
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-800 border-gray-700">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-300">Active Members</CardTitle>
+                <Users className="h-4 w-4 text-green-400" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white">
+                  {mockTrainers.reduce((sum, trainer) => sum + trainer.activeMembers, 0)}
+                </div>
+                <p className="text-xs text-gray-400">
+                  Members trained
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-800 border-gray-700">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-300">Avg Rating</CardTitle>
+                <Star className="h-4 w-4 text-yellow-400" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white">
+                  {(mockTrainers.reduce((sum, trainer) => sum + trainer.rating, 0) / mockTrainers.length).toFixed(1)}
+                </div>
+                <p className="text-xs text-gray-400">
+                  Out of 5 stars
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Search and Filters */}
+          <Card className="bg-gray-800 border-gray-700 mb-6">
+            <CardContent className="pt-6">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search trainers by name, specialization, or location..."
+                      className="w-full pl-10 pr-4 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filter
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Trainers Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockTrainers.map((trainer) => (
+              <Card key={trainer.id} className="bg-gray-800 border-gray-700 hover:shadow-lg hover:shadow-gray-900/50 transition-shadow">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <CardTitle className="text-white">{trainer.name}</CardTitle>
+                      <CardDescription className="text-gray-400">
+                        {trainer.specialization}
+                      </CardDescription>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-700">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-700">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-900/20">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center space-x-2 text-sm">
+                    <Mail className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-300">{trainer.email}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm">
+                    <Phone className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-300">{trainer.phone}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm">
+                    <MapPin className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-300">{trainer.location}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm">
+                    <Clock className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-300">{trainer.availability}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      <span className="text-sm text-white">{trainer.rating}</span>
+                    </div>
+                    <span className="text-sm text-gray-400">{trainer.experience}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className={`px-2 py-1 text-xs rounded-full ${getSpecializationColor(trainer.specialization)}`}>
+                      {trainer.specialization}
+                    </span>
+                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(trainer.status)}`}>
+                      {trainer.status}
+                    </span>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 pt-2 text-sm">
+                    <div className="text-center">
+                      <div className="text-white font-medium">{trainer.totalClasses}</div>
+                      <div className="text-gray-400 text-xs">Classes</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-white font-medium">{trainer.activeMembers}</div>
+                      <div className="text-gray-400 text-xs">Members</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex space-x-2 pt-2">
+                    <Button size="sm" className="flex-1">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      Schedule
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">
+                      <BarChart3 className="h-3 w-3 mr-1" />
+                      Stats
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+            <div className="flex flex-wrap gap-4">
+              <Button asChild>
+                <Link href="/trainers/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New Trainer
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="border-gray-600 text-gray-300 hover:bg-gray-700">
+                <Link href="/schedule">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  View Schedules
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="border-gray-600 text-gray-300 hover:bg-gray-700">
+                <Link href="/certifications">
+                  <Award className="h-4 w-4 mr-2" />
+                  Manage Certifications
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="border-gray-600 text-gray-300 hover:bg-gray-700">
+                <Link href="/reports">
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Trainer Reports
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ProtectedPage>
   )
 } 
